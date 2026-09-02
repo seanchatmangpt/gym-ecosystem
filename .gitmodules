@@ -16,3 +16,27 @@
 [submodule "vendor/beam4pm"]
 	path = vendor/beam4pm
 	url = https://github.com/seanchatmangpt/beam4pm.git
+[submodule "vendor/awesome-ai-gyms"]
+	path = vendor/awesome-ai-gyms
+	url = https://github.com/seanchatmangpt/awesome-ai-gyms.git
+[submodule "vendor/biblegym"]
+	path = vendor/biblegym
+	url = https://github.com/seanchatmangpt/biblegym.git
+[submodule "vendor/chatgptgym"]
+	path = vendor/chatgptgym
+	url = https://github.com/seanchatmangpt/chatgptgym.git
+[submodule "vendor/claudecodegym"]
+	path = vendor/claudecodegym
+	url = https://github.com/seanchatmangpt/claudecodegym.git
+[submodule "vendor/gitgym"]
+	path = vendor/gitgym
+	url = https://github.com/seanchatmangpt/gitgym.git
+[submodule "vendor/lifegym"]
+	path = vendor/lifegym
+	url = https://github.com/seanchatmangpt/lifegym.git
+[submodule "vendor/rrgym"]
+	path = vendor/rrgym
+	url = https://github.com/seanchatmangpt/rrgym.git
+[submodule "vendor/ww3gym"]
+	path = vendor/ww3gym
+	url = https://github.com/seanchatmangpt/ww3gym.git

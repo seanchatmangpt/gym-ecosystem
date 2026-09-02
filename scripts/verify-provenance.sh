@@ -9,21 +9,34 @@ import tomllib
 root = Path.cwd()
 lock = tomllib.loads((root / "ecosystem.lock.toml").read_text())
 submodules = lock["submodules"]
-expected = [
-    (submodules["gymact_path"], submodules["gymact_commit"]),
-    (submodules["autofde_lab_path"], submodules["autofde_lab_commit"]),
-    (submodules["sregym_path"], submodules["sregym_commit"]),
-    (submodules["fdegym_path"], submodules["fdegym_commit"]),
-    (submodules["ggen_ecosystem_path"], submodules["ggen_ecosystem_commit"]),
-    (submodules["beam4pm_path"], submodules["beam4pm_commit"]),
-]
 
-gitmodules = (root / ".gitmodules").read_text()
+keys = sorted(k[:-5] for k in submodules if k.endswith("_path"))
+expected = []
 errors = []
-for path, wanted in expected:
-    if f"path = {path}" not in gitmodules:
-        errors.append(f"{path}: missing from .gitmodules")
+for key in keys:
+    path_key = f"{key}_path"
+    commit_key = f"{key}_commit"
+    if commit_key not in submodules:
+        errors.append(f"{key}: missing {commit_key} in lock")
         continue
+    expected.append((submodules[path_key], submodules[commit_key]))
+
+try:
+    declared_raw = subprocess.check_output(
+        ["git", "config", "-f", ".gitmodules", "--get-regexp", r"^submodule\..*\.path$"],
+        text=True,
+    )
+except subprocess.CalledProcessError:
+    declared_raw = ""
+declared_paths = {line.split(None, 1)[1] for line in declared_raw.splitlines() if line.strip()}
+locked_paths = {path for path, _ in expected}
+
+for missing in sorted(locked_paths - declared_paths):
+    errors.append(f"{missing}: locked but missing from .gitmodules")
+for extra in sorted(declared_paths - locked_paths):
+    errors.append(f"{extra}: declared in .gitmodules but missing from lock")
+
+for path, wanted in expected:
     mode = subprocess.check_output(
         ["git", "ls-files", "-s", "--", path], text=True
     ).strip().split()

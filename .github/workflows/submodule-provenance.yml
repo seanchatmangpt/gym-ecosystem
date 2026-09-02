@@ -40,3 +40,11 @@ jobs:
 
       - name: Verify materialized identities
         run: ./scripts/verify-provenance.sh
+
+      - name: Prove downstream manufacturing surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -x vendor/ggen-ecosystem/bin/ggen-ecosystem
+          vendor/ggen-ecosystem/bin/ggen-ecosystem --help | grep -F 'ggen-ecosystem manufacture'
+          echo 'DOWNSTREAM_MANUFACTURE_SURFACE_ALIVE'
