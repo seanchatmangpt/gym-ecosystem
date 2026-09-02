@@ -1,0 +1,62 @@
+version = 1
+base_main_sha = "9fe08221b7fc7003543c0fb6b2c8a5ade3f52d9c"
+updated_at = "2026-09-02T04:18:00Z"
+
+[gymact]
+sha = "dc8c8add4edd525e14815e44d03b84b347abfcc8"
+repository = "https://github.com/seanchatmangpt/gymact"
+role = "execution physics, providers, authority boundaries, receipts, verification and scoring"
+
+[autofde_lab]
+sha = "e5c4aef788600bf3e44abe396fcb1e0668fbcc43"
+repository = "https://github.com/seanchatmangpt/autofde-lab"
+role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
+
+[sregym]
+sha = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
+repository = "https://github.com/seanchatmangpt/SREGym"
+role = "SRE and operations environments, failure worlds and benchmarks"
+
+[fdegym]
+sha = "c7b51338fd7659540bfb1f559b02f426a61c460f"
+repository = "https://github.com/seanchatmangpt/fdegym"
+role = "Forward Deployed Engineering environments and benchmarks"
+
+[ggen_ecosystem]
+sha = "bed9c1455a9eb9137fea85ed75257a42ce5abbd3"
+repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
+role = "deterministic software-manufacturing substrate"
+
+[beam4pm]
+sha = "96d6e10338de2538e93dc27350379b38447216f4"
+repository = "https://github.com/seanchatmangpt/beam4pm"
+role = "OCEL, process mining and process-intelligence feedback"
+
+[submodules]
+gymact_path = "vendor/gymact"
+gymact_commit = "dc8c8add4edd525e14815e44d03b84b347abfcc8"
+autofde_lab_path = "vendor/autofde-lab"
+autofde_lab_commit = "e5c4aef788600bf3e44abe396fcb1e0668fbcc43"
+sregym_path = "vendor/SREGym"
+sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
+fdegym_path = "vendor/fdegym"
+fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
+ggen_ecosystem_path = "vendor/ggen-ecosystem"
+ggen_ecosystem_commit = "bed9c1455a9eb9137fea85ed75257a42ce5abbd3"
+beam4pm_path = "vendor/beam4pm"
+beam4pm_commit = "96d6e10338de2538e93dc27350379b38447216f4"
+
+[composition]
+consumer_boundary = "gym-ecosystem"
+execution_kernel = "vendor/gymact"
+planning_lab = "vendor/autofde-lab"
+sre_worlds = "vendor/SREGym"
+fde_worlds = "vendor/fdegym"
+software_manufacturing = "vendor/ggen-ecosystem"
+process_intelligence = "vendor/beam4pm"
+rule = "consumers integrate gym-ecosystem; direct execution/planner/world/manufacturing/process-intelligence pins are internal ecosystem concerns"
+
+[simulation]
+episode_equation = "World x Roles x Policies x InformationPartitions x Authority x Parameters"
+default_authority = "SIMULATION_ONLY"
+production_actuation = "BRCE_REQUIRED"

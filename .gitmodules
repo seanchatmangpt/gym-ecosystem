@@ -1,0 +1,18 @@
+[submodule "vendor/gymact"]
+	path = vendor/gymact
+	url = https://github.com/seanchatmangpt/gymact.git
+[submodule "vendor/autofde-lab"]
+	path = vendor/autofde-lab
+	url = https://github.com/seanchatmangpt/autofde-lab.git
+[submodule "vendor/SREGym"]
+	path = vendor/SREGym
+	url = https://github.com/seanchatmangpt/SREGym.git
+[submodule "vendor/fdegym"]
+	path = vendor/fdegym
+	url = https://github.com/seanchatmangpt/fdegym.git
+[submodule "vendor/ggen-ecosystem"]
+	path = vendor/ggen-ecosystem
+	url = https://github.com/seanchatmangpt/ggen-ecosystem.git
+[submodule "vendor/beam4pm"]
+	path = vendor/beam4pm
+	url = https://github.com/seanchatmangpt/beam4pm.git
