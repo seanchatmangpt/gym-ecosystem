@@ -1,0 +1,246 @@
+name: Autonomic Crown
+
+on:
+  pull_request:
+    paths:
+      - "scripts/crown-submodules.py"
+      - ".github/workflows/autonomic-crown.yml"
+      - ".github/workflows/gym-ecosystem-container.yml"
+      - ".gitmodules"
+      - "ecosystem.lock.toml"
+      - "Dockerfile"
+      - "scripts/container-smoke.sh"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/crown-submodules.py"
+      - ".github/workflows/autonomic-crown.yml"
+      - ".github/workflows/gym-ecosystem-container.yml"
+      - ".gitmodules"
+      - "ecosystem.lock.toml"
+      - "Dockerfile"
+      - "scripts/container-smoke.sh"
+  schedule:
+    - cron: "19 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: gym-autonomic-crown
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate-reconciler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact subject
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          submodules: false
+      - name: Compile and observe crown plan without writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python3 -m py_compile scripts/crown-submodules.py
+          python3 scripts/crown-submodules.py --receipt "$RUNNER_TEMP/crown-plan.json"
+          git diff --exit-code
+          docker buildx build --check -f Dockerfile .
+          echo GYM_AUTONOMIC_CROWN_RECONCILER_ALIVE
+      - name: Upload observation receipt
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: gym-crown-observation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/crown-plan.json
+          retention-days: 14
+          if-no-files-found: error
+
+  reconcile:
+    if: github.event_name != 'pull_request'
+    needs: validate-reconciler
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      actions: write
+      contents: write
+      packages: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout current main with write authority
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: main
+          fetch-depth: 0
+          submodules: false
+
+      - name: Reconcile all reference/control-plane repositories
+        id: reconcile
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/autonomic-crown"
+          BASE="$(git rev-parse HEAD)"
+          python3 scripts/crown-submodules.py --apply --receipt "$RUNNER_TEMP/autonomic-crown/plan.json"
+          git add ecosystem.lock.toml
+          while read -r _ path; do
+            [[ -n "$path" ]] && git add -- "$path"
+          done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
+          git diff --cached --check
+          while IFS= read -r path; do
+            [[ -z "$path" ]] && continue
+            if [[ "$path" == "ecosystem.lock.toml" ]]; then
+              continue
+            fi
+            allowed=false
+            while read -r _ submodule_path; do
+              if [[ "$path" == "$submodule_path" ]]; then
+                allowed=true
+                break
+              fi
+            done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
+            [[ "$allowed" == true ]] || { echo "GYM_CROWN_BLOCKED[UNAUTHORIZED_PATH]:$path" >&2; exit 1; }
+          done < <(git diff --cached --name-only)
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "base=$BASE" >> "$GITHUB_OUTPUT"
+            echo "GYM_AUTONOMIC_CROWN_NOOP_ALIVE $BASE"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "base=$BASE" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Manufacture isolated crown candidate
+        if: steps.reconcile.outputs.changed == 'true'
+        id: candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "automation/crown-${GITHUB_RUN_ID}"
+          git commit -m 'chore(crown): reconcile gym ecosystem heads'
+          CANDIDATE="$(git rev-parse HEAD)"
+          echo "candidate=$CANDIDATE" >> "$GITHUB_OUTPUT"
+          echo "GYM_CROWN_CANDIDATE $CANDIDATE base=${{ steps.reconcile.outputs.base }}"
+
+      - name: Execute exact candidate provenance and container court
+        if: steps.reconcile.outputs.changed == 'true'
+        id: court
+        shell: bash
+        run: |
+          set -euo pipefail
+          CANDIDATE="${{ steps.candidate.outputs.candidate }}"
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          git submodule sync
+          git submodule update --init --depth 1
+          ./scripts/verify-provenance.sh
+          vendor/ggen-ecosystem/bin/ggen-ecosystem --help | grep -q manufacture
+          GGEN_SHA="$(python3 - <<'PY'
+          import tomllib
+          with open('ecosystem.lock.toml','rb') as f: d=tomllib.load(f)
+          print(d['submodules']['ggen_ecosystem_commit'])
+          PY
+          )"
+          BASE_IMAGE="ghcr.io/seanchatmangpt/ggen-ecosystem:sha-${GGEN_SHA}"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          for _ in $(seq 1 30); do
+            docker manifest inspect "$BASE_IMAGE" >/dev/null 2>&1 && break
+            sleep 10
+          done
+          docker manifest inspect "$BASE_IMAGE" >/dev/null
+          docker build --build-arg "GGEN_ECOSYSTEM_IMAGE=$BASE_IMAGE" --build-arg "SOURCE_SHA=$CANDIDATE" -t gym-ecosystem:crown .
+          docker run --rm gym-ecosystem:crown bash -lc './scripts/container-smoke.sh'
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
+          echo "ggen_sha=$GGEN_SHA" >> "$GITHUB_OUTPUT"
+          echo "GYM_AUTONOMIC_CROWN_CHICAGO_ALIVE $CANDIDATE ggen=$GGEN_SHA"
+
+      - name: Promote exact candidate with compare-and-swap
+        if: steps.reconcile.outputs.changed == 'true'
+        id: promote
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="${{ steps.reconcile.outputs.base }}"
+          CANDIDATE="${{ steps.candidate.outputs.candidate }}"
+          git fetch origin main
+          CURRENT="$(git rev-parse origin/main)"
+          [[ "$CURRENT" == "$BASE" ]] || { echo "GYM_CROWN_REFUSED[MAIN_MOVED]:expected=$BASE:observed=$CURRENT" >&2; exit 75; }
+          git merge-base --is-ancestor "$BASE" "$CANDIDATE"
+          git push origin "$CANDIDATE:refs/heads/main"
+          git fetch origin main
+          MAIN_SHA="$(git rev-parse origin/main)"
+          [[ "$MAIN_SHA" == "$CANDIDATE" ]] || { echo "GYM_CROWN_BLOCKED[PROMOTION_MISMATCH]:candidate=$CANDIDATE:main=$MAIN_SHA" >&2; exit 1; }
+          echo "main_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
+          echo "GYM_AUTONOMIC_CROWN_PROMOTION_ALIVE candidate=$CANDIDATE main=$MAIN_SHA"
+
+      - name: Resume gym ecosystem container publication
+        if: steps.reconcile.outputs.changed == 'true'
+        id: resume
+        shell: bash
+        run: |
+          set -euo pipefail
+          MAIN_SHA="${{ steps.promote.outputs.main_sha }}"
+          STARTED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          gh workflow run gym-ecosystem-container.yml --ref main
+          RUN_ID=""
+          for _ in $(seq 1 30); do
+            RUN_ID="$(gh run list --workflow gym-ecosystem-container.yml --branch main --event workflow_dispatch --limit 30 --json databaseId,headSha,createdAt \
+              | jq -r --arg sha "$MAIN_SHA" --arg started "$STARTED" '.[] | select(.headSha == $sha and .createdAt >= $started) | .databaseId' | head -1)"
+            [[ -n "$RUN_ID" ]] && break
+            sleep 2
+          done
+          [[ -n "$RUN_ID" ]] || { echo 'GYM_CROWN_BLOCKED[CONTAINER_RESUME_NOT_OBSERVED]' >&2; exit 1; }
+          gh run watch "$RUN_ID" --exit-status --interval 10
+          echo "container_run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "GYM_AUTONOMIC_CROWN_RESUME_ALIVE run=$RUN_ID main=$MAIN_SHA"
+
+      - name: Bind closure receipt
+        if: always()
+        shell: bash
+        env:
+          CHANGED: ${{ steps.reconcile.outputs.changed }}
+          BASE_SHA: ${{ steps.reconcile.outputs.base }}
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.candidate }}
+          MAIN_SHA: ${{ steps.promote.outputs.main_sha }}
+          CONTAINER_RUN_ID: ${{ steps.resume.outputs.container_run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/autonomic-crown"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          receipt = {
+              'schema':'https://ggen.dev/receipts/gym-autonomic-crown-closure/v2',
+              'repository':os.environ['GITHUB_REPOSITORY'],
+              'run_id':os.environ['GITHUB_RUN_ID'],
+              'base_sha':os.environ.get('BASE_SHA',''),
+              'changed':os.environ.get('CHANGED','false') == 'true',
+              'candidate_sha':os.environ.get('CANDIDATE_SHA',''),
+              'main_sha':os.environ.get('MAIN_SHA',''),
+              'container_run_id':os.environ.get('CONTAINER_RUN_ID',''),
+              'promotion_mode':'verified-fast-forward-cas',
+          }
+          receipt['standing']='ALIVE' if (not receipt['changed'] or (receipt['candidate_sha'] and receipt['main_sha'] == receipt['candidate_sha'] and receipt['container_run_id'])) else 'BLOCKED'
+          p=Path(os.environ['RUNNER_TEMP'])/'autonomic-crown'/'closure.json'
+          p.write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          if receipt['standing'] != 'ALIVE': raise SystemExit('GYM_AUTONOMIC_CROWN_BLOCKED')
+          PY
+
+      - name: Upload crown receipts
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: gym-autonomic-crown-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/autonomic-crown/
+          retention-days: 30
+          if-no-files-found: error
