@@ -1,0 +1,42 @@
+name: Submodule provenance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  exact-head-submodule-court:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact subject
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          submodules: false
+
+      - name: Prove exact-head identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "EXACT_HEAD_ALIVE $actual"
+
+      - name: Verify declared Gitlinks against lock
+        run: ./scripts/verify-provenance.sh
+
+      - name: Materialize direct submodules
+        shell: bash
+        run: |
+          set -euo pipefail
+          git submodule sync --recursive
+          git submodule update --init --depth 1
+
+      - name: Verify materialized identities
+        run: ./scripts/verify-provenance.sh
