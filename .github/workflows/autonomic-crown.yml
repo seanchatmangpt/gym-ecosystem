@@ -71,7 +71,6 @@ jobs:
     permissions:
       actions: write
       contents: write
-      pull-requests: write
       packages: read
     env:
       GH_TOKEN: ${{ github.token }}
@@ -96,6 +95,20 @@ jobs:
             [[ -n "$path" ]] && git add -- "$path"
           done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
           git diff --cached --check
+          while IFS= read -r path; do
+            [[ -z "$path" ]] && continue
+            if [[ "$path" == "ecosystem.lock.toml" ]]; then
+              continue
+            fi
+            allowed=false
+            while read -r _ submodule_path; do
+              if [[ "$path" == "$submodule_path" ]]; then
+                allowed=true
+                break
+              fi
+            done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
+            [[ "$allowed" == true ]] || { echo "GYM_CROWN_BLOCKED[UNAUTHORIZED_PATH]:$path" >&2; exit 1; }
+          done < <(git diff --cached --name-only)
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "base=$BASE" >> "$GITHUB_OUTPUT"
@@ -105,7 +118,7 @@ jobs:
             echo "base=$BASE" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create isolated crown candidate and PR
+      - name: Manufacture isolated crown candidate
         if: steps.reconcile.outputs.changed == 'true'
         id: candidate
         shell: bash
@@ -113,18 +126,11 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          BRANCH="automation/crown-${GITHUB_RUN_ID}"
-          git switch -c "$BRANCH"
+          git switch -c "automation/crown-${GITHUB_RUN_ID}"
           git commit -m 'chore(crown): reconcile gym ecosystem heads'
           CANDIDATE="$(git rev-parse HEAD)"
-          git push --set-upstream origin "$BRANCH"
-          for stale in $(gh pr list --state open --limit 20 --json number,title --jq '.[] | select(.title == "chore(crown): reconcile gym ecosystem heads") | .number'); do
-            gh pr close "$stale" --comment "Superseded by autonomic crown run ${GITHUB_RUN_ID}." --delete-branch || true
-          done
-          PR_URL="$(gh pr create --base main --head "$BRANCH" --title 'chore(crown): reconcile gym ecosystem heads' --body "Autonomic gym crown candidate manufactured by run ${GITHUB_RUN_ID}. Exact provenance and container execution are verified before merge.")"
           echo "candidate=$CANDIDATE" >> "$GITHUB_OUTPUT"
-          echo "pr_number=${PR_URL##*/}" >> "$GITHUB_OUTPUT"
-          echo "GYM_CROWN_CANDIDATE $CANDIDATE"
+          echo "GYM_CROWN_CANDIDATE $CANDIDATE base=${{ steps.reconcile.outputs.base }}"
 
       - name: Execute exact candidate provenance and container court
         if: steps.reconcile.outputs.changed == 'true'
@@ -145,6 +151,7 @@ jobs:
           PY
           )"
           BASE_IMAGE="ghcr.io/seanchatmangpt/ggen-ecosystem:sha-${GGEN_SHA}"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           for _ in $(seq 1 30); do
             docker manifest inspect "$BASE_IMAGE" >/dev/null 2>&1 && break
             sleep 10
@@ -152,23 +159,28 @@ jobs:
           docker manifest inspect "$BASE_IMAGE" >/dev/null
           docker build --build-arg "GGEN_ECOSYSTEM_IMAGE=$BASE_IMAGE" --build-arg "SOURCE_SHA=$CANDIDATE" -t gym-ecosystem:crown .
           docker run --rm gym-ecosystem:crown bash -lc './scripts/container-smoke.sh'
+          test "$(git rev-parse HEAD)" = "$CANDIDATE"
           echo "ggen_sha=$GGEN_SHA" >> "$GITHUB_OUTPUT"
           echo "GYM_AUTONOMIC_CROWN_CHICAGO_ALIVE $CANDIDATE ggen=$GGEN_SHA"
 
-      - name: Merge exact candidate and prove containment
+      - name: Promote exact candidate with compare-and-swap
         if: steps.reconcile.outputs.changed == 'true'
-        id: merge
+        id: promote
         shell: bash
         run: |
           set -euo pipefail
-          PR="${{ steps.candidate.outputs.pr_number }}"
+          BASE="${{ steps.reconcile.outputs.base }}"
           CANDIDATE="${{ steps.candidate.outputs.candidate }}"
-          gh pr merge "$PR" --merge --delete-branch
           git fetch origin main
-          git merge-base --is-ancestor "$CANDIDATE" origin/main
+          CURRENT="$(git rev-parse origin/main)"
+          [[ "$CURRENT" == "$BASE" ]] || { echo "GYM_CROWN_REFUSED[MAIN_MOVED]:expected=$BASE:observed=$CURRENT" >&2; exit 75; }
+          git merge-base --is-ancestor "$BASE" "$CANDIDATE"
+          git push origin "$CANDIDATE:refs/heads/main"
+          git fetch origin main
           MAIN_SHA="$(git rev-parse origin/main)"
+          [[ "$MAIN_SHA" == "$CANDIDATE" ]] || { echo "GYM_CROWN_BLOCKED[PROMOTION_MISMATCH]:candidate=$CANDIDATE:main=$MAIN_SHA" >&2; exit 1; }
           echo "main_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
-          echo "GYM_AUTONOMIC_CROWN_CONTAINMENT_ALIVE candidate=$CANDIDATE main=$MAIN_SHA"
+          echo "GYM_AUTONOMIC_CROWN_PROMOTION_ALIVE candidate=$CANDIDATE main=$MAIN_SHA"
 
       - name: Resume gym ecosystem container publication
         if: steps.reconcile.outputs.changed == 'true'
@@ -176,7 +188,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          MAIN_SHA="${{ steps.merge.outputs.main_sha }}"
+          MAIN_SHA="${{ steps.promote.outputs.main_sha }}"
           STARTED="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           gh workflow run gym-ecosystem-container.yml --ref main
           RUN_ID=""
@@ -198,8 +210,7 @@ jobs:
           CHANGED: ${{ steps.reconcile.outputs.changed }}
           BASE_SHA: ${{ steps.reconcile.outputs.base }}
           CANDIDATE_SHA: ${{ steps.candidate.outputs.candidate }}
-          PR_NUMBER: ${{ steps.candidate.outputs.pr_number }}
-          MAIN_SHA: ${{ steps.merge.outputs.main_sha }}
+          MAIN_SHA: ${{ steps.promote.outputs.main_sha }}
           CONTAINER_RUN_ID: ${{ steps.resume.outputs.container_run_id }}
         run: |
           set -euo pipefail
@@ -208,17 +219,17 @@ jobs:
           import json, os
           from pathlib import Path
           receipt = {
-              'schema':'https://ggen.dev/receipts/gym-autonomic-crown-closure/v1',
+              'schema':'https://ggen.dev/receipts/gym-autonomic-crown-closure/v2',
               'repository':os.environ['GITHUB_REPOSITORY'],
               'run_id':os.environ['GITHUB_RUN_ID'],
               'base_sha':os.environ.get('BASE_SHA',''),
               'changed':os.environ.get('CHANGED','false') == 'true',
               'candidate_sha':os.environ.get('CANDIDATE_SHA',''),
-              'pr_number':os.environ.get('PR_NUMBER',''),
               'main_sha':os.environ.get('MAIN_SHA',''),
               'container_run_id':os.environ.get('CONTAINER_RUN_ID',''),
+              'promotion_mode':'verified-fast-forward-cas',
           }
-          receipt['standing']='ALIVE' if (not receipt['changed'] or (receipt['candidate_sha'] and receipt['main_sha'] and receipt['container_run_id'])) else 'BLOCKED'
+          receipt['standing']='ALIVE' if (not receipt['changed'] or (receipt['candidate_sha'] and receipt['main_sha'] == receipt['candidate_sha'] and receipt['container_run_id'])) else 'BLOCKED'
           p=Path(os.environ['RUNNER_TEMP'])/'autonomic-crown'/'closure.json'
           p.write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
           print(json.dumps(receipt,sort_keys=True))
