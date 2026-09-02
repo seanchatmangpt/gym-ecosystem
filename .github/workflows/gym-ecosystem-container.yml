@@ -27,9 +27,10 @@ permissions:
 jobs:
   preflight:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 40
     permissions:
       contents: read
+      packages: read
     outputs:
       ggen_sha: ${{ steps.lock.outputs.ggen_sha }}
     steps:
@@ -64,6 +65,30 @@ jobs:
           vendor/ggen-ecosystem/bin/ggen-ecosystem --help | grep -q manufacture
           docker buildx build --check -f Dockerfile .
           echo GYM_ECOSYSTEM_PREFLIGHT_ALIVE
+      - name: Log in to GHCR for exact manufacturer gate
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Wait for exact ggen manufacturer image
+        if: github.event_name != 'pull_request'
+        shell: bash
+        env:
+          GGEN_SHA: ${{ steps.lock.outputs.ggen_sha }}
+        run: |
+          set -euo pipefail
+          BASE_IMAGE="ghcr.io/seanchatmangpt/ggen-ecosystem:sha-${GGEN_SHA}"
+          for _ in $(seq 1 180); do
+            if docker manifest inspect "$BASE_IMAGE" >/dev/null 2>&1; then
+              echo "GYM_ECOSYSTEM_MANUFACTURER_IMAGE_ALIVE $BASE_IMAGE"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "GYM_ECOSYSTEM_BLOCKED[MANUFACTURER_NOT_PUBLISHED]:$BASE_IMAGE" >&2
+          exit 1
 
   build-amd64:
     if: github.event_name != 'pull_request'
