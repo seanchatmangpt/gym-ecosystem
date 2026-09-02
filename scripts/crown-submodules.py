@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Reconcile direct Git submodules to their remote default-branch crowns.
 
-This is a bounded repository operation: it observes declared direct submodules,
-plans drift, and (with --apply) checks out the observed remote crown and updates
-all matching lock identities. It never merges, publishes, or changes authority;
-those operations remain in the GitHub Actions control loop.
+The runtime authority boundary is intentionally narrow: with --apply this script
+may update only declared submodule Gitlinks and their exact identities in
+`ecosystem.lock.toml`. Workflow definitions and other authored surfaces are not
+runtime crown state.
 """
 from __future__ import annotations
 
@@ -34,7 +34,11 @@ def submodules() -> list[dict[str, str]]:
     for section in parser.sections():
         if not section.startswith("submodule "):
             continue
-        result.append({"name": section[len("submodule "):].strip('"'), "path": parser[section]["path"], "url": parser[section]["url"]})
+        result.append({
+            "name": section[len("submodule "):].strip('"'),
+            "path": parser[section]["path"],
+            "url": parser[section]["url"],
+        })
     return sorted(result, key=lambda row: row["path"])
 
 
@@ -80,21 +84,6 @@ def update_lock_metadata(base_sha: str) -> None:
     LOCK.write_text(text)
 
 
-def synchronize_marketplace_default(new_sha: str) -> list[str]:
-    changed: list[str] = []
-    pattern = re.compile(r'(marketplace_sha:\n(?:[ \t]+.*\n)*?[ \t]+default: )[0-9a-f]{40}', re.M)
-    for rel in ("ontology.ttl", ".github/workflows/ggen-ecosystem-sync.yml"):
-        path = ROOT / rel
-        if not path.exists():
-            continue
-        text = path.read_text()
-        updated, n = pattern.subn(rf'\g<1>{new_sha}', text)
-        if n and updated != text:
-            path.write_text(updated)
-            changed.append(rel)
-    return changed
-
-
 def plan() -> dict:
     rows = []
     for sub in submodules():
@@ -102,19 +91,17 @@ def plan() -> dict:
         default_ref, latest = remote_head(sub["url"])
         rows.append({**sub, "current": current, "default_ref": default_ref, "latest": latest, "changed": current != latest})
     return {
-        "schema": "https://ggen.dev/receipts/autonomic-crown/v1",
+        "schema": "https://ggen.dev/receipts/gym-autonomic-crown/v2",
         "repository": run("git", "config", "--get", "remote.origin.url", check=False).strip(),
         "base_sha": run("git", "rev-parse", "HEAD").strip(),
+        "authority_boundary": "gitlinks+lock-only",
         "submodules": rows,
         "changed_count": sum(1 for row in rows if row["changed"]),
     }
 
 
 def apply(doc: dict) -> None:
-    marketplace_sha: str | None = None
     for row in doc["submodules"]:
-        if row["path"] == "vendor/ggen-marketplace":
-            marketplace_sha = row["latest"]
         if not row["changed"]:
             continue
         path = row["path"]
@@ -124,10 +111,12 @@ def apply(doc: dict) -> None:
         replaced = replace_exact_sha(LOCK, row["current"], row["latest"])
         if replaced == 0:
             raise SystemExit(f"CROWN_BLOCKED[LOCK_PIN_NOT_FOUND]:{path}:{row['current']}")
-    mirrors = synchronize_marketplace_default(marketplace_sha) if marketplace_sha else []
-    doc["mirrors_updated"] = mirrors
-    if doc["changed_count"] or mirrors:
+    if doc["changed_count"]:
         update_lock_metadata(doc["base_sha"])
+
+    workflow_drift = run("git", "diff", "--name-only", "--", ".github/workflows", check=False).strip()
+    if workflow_drift:
+        raise SystemExit(f"CROWN_BLOCKED[WORKFLOW_MUTATION_OUTSIDE_AUTHORITY]:{workflow_drift.replace(chr(10), ',')}")
 
 
 def main() -> int:
@@ -144,7 +133,7 @@ def main() -> int:
     receipt.parent.mkdir(parents=True, exist_ok=True)
     receipt.write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n")
     print(json.dumps(doc, sort_keys=True))
-    print(f"AUTONOMIC_CROWN_PLAN_ALIVE changed={doc['changed_count']} mirrors={len(doc.get('mirrors_updated', []))} apply={str(args.apply).lower()}")
+    print(f"GYM_AUTONOMIC_CROWN_PLAN_ALIVE changed={doc['changed_count']} authority=gitlinks+lock-only apply={str(args.apply).lower()}")
     return 0
 
 
