@@ -1,6 +1,6 @@
-version = 1
-base_main_sha = "9fe08221b7fc7003543c0fb6b2c8a5ade3f52d9c"
-updated_at = "2026-09-02T04:18:00Z"
+version = 2
+base_main_sha = "0bd2e6453a92ad0d3145f27326a5f2c7a554cf7f"
+updated_at = "2026-09-02T04:20:00Z"
 
 [gymact]
 sha = "dc8c8add4edd525e14815e44d03b84b347abfcc8"
@@ -12,25 +12,70 @@ sha = "e5c4aef788600bf3e44abe396fcb1e0668fbcc43"
 repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
-[sregym]
-sha = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
-repository = "https://github.com/seanchatmangpt/SREGym"
-role = "SRE and operations environments, failure worlds and benchmarks"
-
-[fdegym]
-sha = "c7b51338fd7659540bfb1f559b02f426a61c460f"
-repository = "https://github.com/seanchatmangpt/fdegym"
-role = "Forward Deployed Engineering environments and benchmarks"
-
 [ggen_ecosystem]
 sha = "bed9c1455a9eb9137fea85ed75257a42ce5abbd3"
 repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
-role = "deterministic software-manufacturing substrate"
+role = "deterministic manufacturer for downstream customer gyms"
 
 [beam4pm]
 sha = "96d6e10338de2538e93dc27350379b38447216f4"
 repository = "https://github.com/seanchatmangpt/beam4pm"
 role = "OCEL, process mining and process-intelligence feedback"
+
+[gyms.awesome_ai_gyms]
+sha = "d32f01854fbc9bae52960f85e3c2a170113103b4"
+repository = "https://github.com/seanchatmangpt/awesome-ai-gyms"
+role = "DfCM discovery and preservation registry for the wider environment frontier"
+
+[gyms.biblegym]
+sha = "c0a13ea67e6a9e31c2d07f06565ea2b8acfcd8f7"
+repository = "https://github.com/seanchatmangpt/biblegym"
+role = "formation-domain reference gym"
+
+[gyms.chatgptgym]
+sha = "6037963bf825316be977ba08ed416ec85162738d"
+repository = "https://github.com/seanchatmangpt/chatgptgym"
+role = "ChatGPT/cloud-agent reference gym"
+
+[gyms.claudecodegym]
+sha = "449ff3597c96bac2c04c5d1bef970ff802d2154b"
+repository = "https://github.com/seanchatmangpt/claudecodegym"
+role = "Claude Code reference gym"
+
+[gyms.fdegym]
+sha = "c7b51338fd7659540bfb1f559b02f426a61c460f"
+repository = "https://github.com/seanchatmangpt/fdegym"
+role = "Forward Deployed Engineering environments and benchmarks"
+
+[gyms.gitgym]
+sha = "f0856a18bb98d4c9bef5b2d3d1acfac7b11ad7bb"
+repository = "https://github.com/seanchatmangpt/gitgym"
+role = "Git and repository-lifecycle reference gym"
+
+[gyms.gymact]
+sha = "dc8c8add4edd525e14815e44d03b84b347abfcc8"
+repository = "https://github.com/seanchatmangpt/gymact"
+role = "canonical gym execution kernel and reference environment substrate"
+
+[gyms.lifegym]
+sha = "4dffff1f81b83593220c787c08cb6622e3c749ee"
+repository = "https://github.com/seanchatmangpt/lifegym"
+role = "life-domain planning and environment reference gym"
+
+[gyms.rrgym]
+sha = "9f3128ae2b5b752c0f5bb091b433231d226a3585"
+repository = "https://github.com/seanchatmangpt/rrgym"
+role = "institutional and relational-reasoning reference gym"
+
+[gyms.sregym]
+sha = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
+repository = "https://github.com/seanchatmangpt/SREGym"
+role = "SRE and operations environments, failure worlds and benchmarks"
+
+[gyms.ww3gym]
+sha = "0f539e75c772978fe8d1ebd897789649f5785bf2"
+repository = "https://github.com/seanchatmangpt/ww3gym"
+role = "geopolitical/adversarial multi-party reference gym"
 
 [submodules]
 gymact_path = "vendor/gymact"
@@ -45,16 +90,39 @@ ggen_ecosystem_path = "vendor/ggen-ecosystem"
 ggen_ecosystem_commit = "bed9c1455a9eb9137fea85ed75257a42ce5abbd3"
 beam4pm_path = "vendor/beam4pm"
 beam4pm_commit = "96d6e10338de2538e93dc27350379b38447216f4"
+awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
+awesome_ai_gyms_commit = "d32f01854fbc9bae52960f85e3c2a170113103b4"
+biblegym_path = "vendor/biblegym"
+biblegym_commit = "c0a13ea67e6a9e31c2d07f06565ea2b8acfcd8f7"
+chatgptgym_path = "vendor/chatgptgym"
+chatgptgym_commit = "6037963bf825316be977ba08ed416ec85162738d"
+claudecodegym_path = "vendor/claudecodegym"
+claudecodegym_commit = "449ff3597c96bac2c04c5d1bef970ff802d2154b"
+gitgym_path = "vendor/gitgym"
+gitgym_commit = "f0856a18bb98d4c9bef5b2d3d1acfac7b11ad7bb"
+lifegym_path = "vendor/lifegym"
+lifegym_commit = "4dffff1f81b83593220c787c08cb6622e3c749ee"
+rrgym_path = "vendor/rrgym"
+rrgym_commit = "9f3128ae2b5b752c0f5bb091b433231d226a3585"
+ww3gym_path = "vendor/ww3gym"
+ww3gym_commit = "0f539e75c772978fe8d1ebd897789649f5785bf2"
 
 [composition]
 consumer_boundary = "gym-ecosystem"
 execution_kernel = "vendor/gymact"
 planning_lab = "vendor/autofde-lab"
-sre_worlds = "vendor/SREGym"
-fde_worlds = "vendor/fdegym"
+gym_catalog = "all owner-visible repositories whose names contain gym, excluding gym-ecosystem itself"
 software_manufacturing = "vendor/ggen-ecosystem"
 process_intelligence = "vendor/beam4pm"
-rule = "consumers integrate gym-ecosystem; direct execution/planner/world/manufacturing/process-intelligence pins are internal ecosystem concerns"
+rule = "downstream customers integrate manufactured gym products; direct vendor pins are internal ecosystem/reference concerns"
+
+[manufacturing]
+manufacturer = "vendor/ggen-ecosystem"
+command = "vendor/ggen-ecosystem/bin/ggen-ecosystem manufacture <customer-project-dir>"
+customer_inputs = "ggen.toml + ontology.ttl + admitted packs/templates"
+reference_corpus = "vendor/*gym* plus vendor/SREGym"
+output_contract = "independent downstream customer gym projection"
+source_ownership_rule = "customer source is manufactured from admitted specification; generated projections are not an editing/ownership surface"
 
 [simulation]
 episode_equation = "World x Roles x Policies x InformationPartitions x Authority x Parameters"
