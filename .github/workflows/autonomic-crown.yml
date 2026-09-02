@@ -152,11 +152,14 @@ jobs:
           )"
           BASE_IMAGE="ghcr.io/seanchatmangpt/ggen-ecosystem:sha-${GGEN_SHA}"
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-          for _ in $(seq 1 30); do
-            docker manifest inspect "$BASE_IMAGE" >/dev/null 2>&1 && break
+          for _ in $(seq 1 180); do
+            if docker manifest inspect "$BASE_IMAGE" >/dev/null 2>&1; then
+              echo "GYM_MANUFACTURER_IMAGE_ALIVE $BASE_IMAGE"
+              break
+            fi
             sleep 10
           done
-          docker manifest inspect "$BASE_IMAGE" >/dev/null
+          docker manifest inspect "$BASE_IMAGE" >/dev/null || { echo "GYM_CROWN_BLOCKED[MANUFACTURER_NOT_PUBLISHED]:$BASE_IMAGE" >&2; exit 1; }
           docker build --build-arg "GGEN_ECOSYSTEM_IMAGE=$BASE_IMAGE" --build-arg "SOURCE_SHA=$CANDIDATE" -t gym-ecosystem:crown .
           docker run --rm gym-ecosystem:crown bash -lc './scripts/container-smoke.sh'
           test "$(git rev-parse HEAD)" = "$CANDIDATE"
