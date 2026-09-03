@@ -44,7 +44,6 @@ The lock contains every owner-visible repository whose name contains `gym`, excl
 | `vendor/chatgptgym` | ChatGPT/cloud-agent reference gym |
 | `vendor/claudecodegym` | Claude Code reference gym |
 | `vendor/fdegym` | Forward Deployed Engineering environments and benchmarks |
-| `vendor/gitgym` | Git/repository lifecycle reference gym |
 | `vendor/gymact` | canonical execution kernel and reference environment substrate |
 | `vendor/lifegym` | life-domain planning/environment reference gym |
 | `vendor/rrgym` | institutional/relational reasoning reference gym |

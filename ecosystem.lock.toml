@@ -47,11 +47,6 @@ sha = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 repository = "https://github.com/seanchatmangpt/fdegym"
 role = "Forward Deployed Engineering environments and benchmarks"
 
-[gyms.gitgym]
-sha = "f0856a18bb98d4c9bef5b2d3d1acfac7b11ad7bb"
-repository = "https://github.com/seanchatmangpt/gitgym"
-role = "Git and repository-lifecycle reference gym"
-
 [gyms.gymact]
 sha = "2ce639c0e68da2588549e0c21550c8587cfef9cc"
 repository = "https://github.com/seanchatmangpt/gymact"
@@ -98,8 +93,6 @@ chatgptgym_path = "vendor/chatgptgym"
 chatgptgym_commit = "6037963bf825316be977ba08ed416ec85162738d"
 claudecodegym_path = "vendor/claudecodegym"
 claudecodegym_commit = "449ff3597c96bac2c04c5d1bef970ff802d2154b"
-gitgym_path = "vendor/gitgym"
-gitgym_commit = "f0856a18bb98d4c9bef5b2d3d1acfac7b11ad7bb"
 lifegym_path = "vendor/lifegym"
 lifegym_commit = "4dffff1f81b83593220c787c08cb6622e3c749ee"
 rrgym_path = "vendor/rrgym"
