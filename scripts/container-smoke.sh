@@ -12,7 +12,7 @@ root = Path.cwd()
 lock = tomllib.loads((root / "ecosystem.lock.toml").read_text())
 subs = lock["submodules"]
 keys = sorted(k[:-5] for k in subs if k.endswith("_path"))
-if len(keys) < 14:
+if len(keys) < 13:
     raise SystemExit(f"GYM_ECOSYSTEM_CONTAINER_BLOCKED[DIRECT_SUBMODULE_COUNT]:{len(keys)}")
 for key in keys:
     path = root / subs[f"{key}_path"]

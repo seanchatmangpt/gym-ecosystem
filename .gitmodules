@@ -28,9 +28,6 @@
 [submodule "vendor/claudecodegym"]
 	path = vendor/claudecodegym
 	url = https://github.com/seanchatmangpt/claudecodegym.git
-[submodule "vendor/gitgym"]
-	path = vendor/gitgym
-	url = https://github.com/seanchatmangpt/gitgym.git
 [submodule "vendor/lifegym"]
 	path = vendor/lifegym
 	url = https://github.com/seanchatmangpt/lifegym.git
