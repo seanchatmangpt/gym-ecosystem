@@ -1,0 +1,126 @@
+{
+  "authority_boundary": "gitlinks+lock-only",
+  "base_sha": "9f32a6874edc7c60e5fe8d2b73b5a24abde6ec83",
+  "changed_count": 3,
+  "repository": "https://github.com/seanchatmangpt/gym-ecosystem",
+  "schema": "https://ggen.dev/receipts/gym-autonomic-crown/v2",
+  "submodules": [
+    {
+      "changed": false,
+      "current": "98147f396db0aaa622c7586d4bec5bdcb4cff20f",
+      "default_ref": "refs/heads/main",
+      "latest": "98147f396db0aaa622c7586d4bec5bdcb4cff20f",
+      "name": "vendor/SREGym",
+      "path": "vendor/SREGym",
+      "url": "https://github.com/seanchatmangpt/SREGym.git"
+    },
+    {
+      "changed": true,
+      "current": "e5c4aef788600bf3e44abe396fcb1e0668fbcc43",
+      "default_ref": "refs/heads/master",
+      "latest": "b0e3b334a41b93c75dd06a56279d2dbb0c94ff4e",
+      "name": "vendor/autofde-lab",
+      "path": "vendor/autofde-lab",
+      "url": "https://github.com/seanchatmangpt/autofde-lab.git"
+    },
+    {
+      "changed": false,
+      "current": "d32f01854fbc9bae52960f85e3c2a170113103b4",
+      "default_ref": "refs/heads/main",
+      "latest": "d32f01854fbc9bae52960f85e3c2a170113103b4",
+      "name": "vendor/awesome-ai-gyms",
+      "path": "vendor/awesome-ai-gyms",
+      "url": "https://github.com/seanchatmangpt/awesome-ai-gyms.git"
+    },
+    {
+      "changed": true,
+      "current": "96d6e10338de2538e93dc27350379b38447216f4",
+      "default_ref": "refs/heads/main",
+      "latest": "6fb0992d9f2a6d9447bf48b476c9b8e9fa390716",
+      "name": "vendor/beam4pm",
+      "path": "vendor/beam4pm",
+      "url": "https://github.com/seanchatmangpt/beam4pm.git"
+    },
+    {
+      "changed": false,
+      "current": "c0a13ea67e6a9e31c2d07f06565ea2b8acfcd8f7",
+      "default_ref": "refs/heads/main",
+      "latest": "c0a13ea67e6a9e31c2d07f06565ea2b8acfcd8f7",
+      "name": "vendor/biblegym",
+      "path": "vendor/biblegym",
+      "url": "https://github.com/seanchatmangpt/biblegym.git"
+    },
+    {
+      "changed": false,
+      "current": "6037963bf825316be977ba08ed416ec85162738d",
+      "default_ref": "refs/heads/agent/chatgpt-cloud-gym",
+      "latest": "6037963bf825316be977ba08ed416ec85162738d",
+      "name": "vendor/chatgptgym",
+      "path": "vendor/chatgptgym",
+      "url": "https://github.com/seanchatmangpt/chatgptgym.git"
+    },
+    {
+      "changed": false,
+      "current": "449ff3597c96bac2c04c5d1bef970ff802d2154b",
+      "default_ref": "refs/heads/main",
+      "latest": "449ff3597c96bac2c04c5d1bef970ff802d2154b",
+      "name": "vendor/claudecodegym",
+      "path": "vendor/claudecodegym",
+      "url": "https://github.com/seanchatmangpt/claudecodegym.git"
+    },
+    {
+      "changed": false,
+      "current": "c7b51338fd7659540bfb1f559b02f426a61c460f",
+      "default_ref": "refs/heads/main",
+      "latest": "c7b51338fd7659540bfb1f559b02f426a61c460f",
+      "name": "vendor/fdegym",
+      "path": "vendor/fdegym",
+      "url": "https://github.com/seanchatmangpt/fdegym.git"
+    },
+    {
+      "changed": true,
+      "current": "ed34d49c6c032e37908486744b560c437ffdd6e9",
+      "default_ref": "refs/heads/main",
+      "latest": "43b7b380cfdd99257ba58adb55c3569e297c9d9d",
+      "name": "vendor/ggen-ecosystem",
+      "path": "vendor/ggen-ecosystem",
+      "url": "https://github.com/seanchatmangpt/ggen-ecosystem.git"
+    },
+    {
+      "changed": false,
+      "current": "2ce639c0e68da2588549e0c21550c8587cfef9cc",
+      "default_ref": "refs/heads/main",
+      "latest": "2ce639c0e68da2588549e0c21550c8587cfef9cc",
+      "name": "vendor/gymact",
+      "path": "vendor/gymact",
+      "url": "https://github.com/seanchatmangpt/gymact.git"
+    },
+    {
+      "changed": false,
+      "current": "4dffff1f81b83593220c787c08cb6622e3c749ee",
+      "default_ref": "refs/heads/main",
+      "latest": "4dffff1f81b83593220c787c08cb6622e3c749ee",
+      "name": "vendor/lifegym",
+      "path": "vendor/lifegym",
+      "url": "https://github.com/seanchatmangpt/lifegym.git"
+    },
+    {
+      "changed": false,
+      "current": "9f3128ae2b5b752c0f5bb091b433231d226a3585",
+      "default_ref": "refs/heads/main",
+      "latest": "9f3128ae2b5b752c0f5bb091b433231d226a3585",
+      "name": "vendor/rrgym",
+      "path": "vendor/rrgym",
+      "url": "https://github.com/seanchatmangpt/rrgym.git"
+    },
+    {
+      "changed": false,
+      "current": "0f539e75c772978fe8d1ebd897789649f5785bf2",
+      "default_ref": "refs/heads/main",
+      "latest": "0f539e75c772978fe8d1ebd897789649f5785bf2",
+      "name": "vendor/ww3gym",
+      "path": "vendor/ww3gym",
+      "url": "https://github.com/seanchatmangpt/ww3gym.git"
+    }
+  ]
+}
