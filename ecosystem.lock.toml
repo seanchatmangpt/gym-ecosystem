@@ -1,6 +1,6 @@
 version = 2
-base_main_sha = "6457c866b48a0a303438d54a0996ebf4ea04ef69"
-updated_at = "2026-09-05T10:43:08Z"
+base_main_sha = "343b905bc5f3046f0f165a1fcafd396df4320eef"
+updated_at = "2026-09-05T13:54:14Z"
 
 [gymact]
 sha = "2ce639c0e68da2588549e0c21550c8587cfef9cc"
@@ -8,7 +8,7 @@ repository = "https://github.com/seanchatmangpt/gymact"
 role = "execution physics, providers, authority boundaries, receipts, verification and scoring"
 
 [autofde_lab]
-sha = "7cc029f21cf6c78803cf16a8bfb9e072affb0437"
+sha = "4669898cd4541b38185e3a2d59951d4b13ec79cb"
 repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
@@ -76,7 +76,7 @@ role = "geopolitical/adversarial multi-party reference gym"
 gymact_path = "vendor/gymact"
 gymact_commit = "2ce639c0e68da2588549e0c21550c8587cfef9cc"
 autofde_lab_path = "vendor/autofde-lab"
-autofde_lab_commit = "7cc029f21cf6c78803cf16a8bfb9e072affb0437"
+autofde_lab_commit = "4669898cd4541b38185e3a2d59951d4b13ec79cb"
 sregym_path = "vendor/SREGym"
 sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
 fdegym_path = "vendor/fdegym"
