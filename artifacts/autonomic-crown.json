@@ -1,7 +1,7 @@
 {
   "authority_boundary": "gitlinks+lock-only",
-  "base_sha": "e6b4224b7b8628f131aa59d0b0a00e2b57d0f74b",
-  "changed_count": 2,
+  "base_sha": "249984a57912693f5f4e0d4b7adc1426af143eb3",
+  "changed_count": 1,
   "repository": "https://github.com/seanchatmangpt/gym-ecosystem",
   "schema": "https://ggen.dev/receipts/gym-autonomic-crown/v2",
   "submodules": [
@@ -15,10 +15,10 @@
       "url": "https://github.com/seanchatmangpt/SREGym.git"
     },
     {
-      "changed": true,
-      "current": "640e0e3d208c0e3a9478a3f8391e0368f719ec17",
+      "changed": false,
+      "current": "edca036e02526014c5298b0cefd287c68ec0eab4",
       "default_ref": "refs/heads/master",
-      "latest": "a8a895e5423d9c673fb49bcd198e397495532d40",
+      "latest": "edca036e02526014c5298b0cefd287c68ec0eab4",
       "name": "vendor/autofde-lab",
       "path": "vendor/autofde-lab",
       "url": "https://github.com/seanchatmangpt/autofde-lab.git"
