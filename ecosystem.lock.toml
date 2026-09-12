@@ -1,6 +1,6 @@
 version = 2
-base_main_sha = "8c824dc24c4555589771c256db19a7c6867ee11a"
-updated_at = "2026-09-12T01:14:01Z"
+base_main_sha = "a16ebfdc5e7d9952f60f2c9fe0c807603d2b79f8"
+updated_at = "2026-09-12T05:54:20Z"
 
 [gymact]
 sha = "0872bdf23bede458fd81f0f11646f99acd0df8ed"
@@ -8,12 +8,12 @@ repository = "https://github.com/seanchatmangpt/gymact"
 role = "execution physics, providers, authority boundaries, receipts, verification and scoring"
 
 [autofde_lab]
-sha = "120dcbf5cb1728b63fa2c0b0f555209d84abd2a3"
+sha = "ffdaedfb1b1c6aa8248a468a319b91140d1c9418"
 repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
 [ggen_ecosystem]
-sha = "14003d4ff67ab629aeaa6337b8c72dc02d17ca00"
+sha = "f154da18d17bc9a6224c695683d2037e862bf30c"
 repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
 role = "deterministic manufacturer for downstream customer gyms"
 
@@ -76,13 +76,13 @@ role = "geopolitical/adversarial multi-party reference gym"
 gymact_path = "vendor/gymact"
 gymact_commit = "0872bdf23bede458fd81f0f11646f99acd0df8ed"
 autofde_lab_path = "vendor/autofde-lab"
-autofde_lab_commit = "120dcbf5cb1728b63fa2c0b0f555209d84abd2a3"
+autofde_lab_commit = "ffdaedfb1b1c6aa8248a468a319b91140d1c9418"
 sregym_path = "vendor/SREGym"
 sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
 fdegym_path = "vendor/fdegym"
 fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 ggen_ecosystem_path = "vendor/ggen-ecosystem"
-ggen_ecosystem_commit = "14003d4ff67ab629aeaa6337b8c72dc02d17ca00"
+ggen_ecosystem_commit = "f154da18d17bc9a6224c695683d2037e862bf30c"
 beam4pm_path = "vendor/beam4pm"
 beam4pm_commit = "7aa4f6485203b5f2f6db7ab118092d02c01670e7"
 awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
