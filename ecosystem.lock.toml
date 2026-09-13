@@ -1,19 +1,19 @@
 version = 2
-base_main_sha = "1b09fcfc3f070751515981a5d1314628bc6a5dc6"
-updated_at = "2026-09-12T22:23:20Z"
+base_main_sha = "8e42f23f94fbc9e7446f73e153422c7b2dec7779"
+updated_at = "2026-09-13T06:18:01Z"
 
 [gymact]
-sha = "0872bdf23bede458fd81f0f11646f99acd0df8ed"
+sha = "4ab72e685302aa591f65fecad0ec73129ecd3589"
 repository = "https://github.com/seanchatmangpt/gymact"
 role = "execution physics, providers, authority boundaries, receipts, verification and scoring"
 
 [autofde_lab]
-sha = "4d7ba389887e0b62c8f602bd2a56e4e2a9857a06"
+sha = "8ed10fc286e9c5665747033436e7c3f8c8091738"
 repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
 [ggen_ecosystem]
-sha = "c306254d57de3513f35f31f3a277d7a192174ab4"
+sha = "bb5c01e130a37781702727e94c0f51c3d41b3621"
 repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
 role = "deterministic manufacturer for downstream customer gyms"
 
@@ -48,7 +48,7 @@ repository = "https://github.com/seanchatmangpt/fdegym"
 role = "Forward Deployed Engineering environments and benchmarks"
 
 [gyms.gymact]
-sha = "0872bdf23bede458fd81f0f11646f99acd0df8ed"
+sha = "4ab72e685302aa591f65fecad0ec73129ecd3589"
 repository = "https://github.com/seanchatmangpt/gymact"
 role = "canonical gym execution kernel and reference environment substrate"
 
@@ -74,15 +74,15 @@ role = "geopolitical/adversarial multi-party reference gym"
 
 [submodules]
 gymact_path = "vendor/gymact"
-gymact_commit = "0872bdf23bede458fd81f0f11646f99acd0df8ed"
+gymact_commit = "4ab72e685302aa591f65fecad0ec73129ecd3589"
 autofde_lab_path = "vendor/autofde-lab"
-autofde_lab_commit = "4d7ba389887e0b62c8f602bd2a56e4e2a9857a06"
+autofde_lab_commit = "8ed10fc286e9c5665747033436e7c3f8c8091738"
 sregym_path = "vendor/SREGym"
 sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
 fdegym_path = "vendor/fdegym"
 fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 ggen_ecosystem_path = "vendor/ggen-ecosystem"
-ggen_ecosystem_commit = "c306254d57de3513f35f31f3a277d7a192174ab4"
+ggen_ecosystem_commit = "bb5c01e130a37781702727e94c0f51c3d41b3621"
 beam4pm_path = "vendor/beam4pm"
 beam4pm_commit = "97b7f03796138c68d2068a14f600628212a5ddc9"
 awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
