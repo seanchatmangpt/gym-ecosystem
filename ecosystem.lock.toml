@@ -1,6 +1,6 @@
 version = 2
-base_main_sha = "5290ea4cdc26288ecf26441d2794937d6ac7766c"
-updated_at = "2026-09-13T12:04:25Z"
+base_main_sha = "e31450d9a393ba9931a5f187ecd3849bcd7f8ca2"
+updated_at = "2026-09-14T06:24:53Z"
 
 [gymact]
 sha = "4ab72e685302aa591f65fecad0ec73129ecd3589"
@@ -13,7 +13,7 @@ repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
 [ggen_ecosystem]
-sha = "e4771eb1b4280446b9086d8b9aaef4313106cca9"
+sha = "1a0c0fd83a50d62b5c9f426f6b03eb266ca71183"
 repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
 role = "deterministic manufacturer for downstream customer gyms"
 
@@ -82,7 +82,7 @@ sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
 fdegym_path = "vendor/fdegym"
 fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 ggen_ecosystem_path = "vendor/ggen-ecosystem"
-ggen_ecosystem_commit = "e4771eb1b4280446b9086d8b9aaef4313106cca9"
+ggen_ecosystem_commit = "1a0c0fd83a50d62b5c9f426f6b03eb266ca71183"
 beam4pm_path = "vendor/beam4pm"
 beam4pm_commit = "293d26fb9a8e1c2be2d8ea719d218919e0b428d4"
 awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
