@@ -1,9 +1,9 @@
 version = 2
-base_main_sha = "b1d3f2978475afae16c85733b477bd2788291de0"
-updated_at = "2026-09-24T05:00:40Z"
+base_main_sha = "f73485f1fd95fe7a51de23e9e44d6b929f35dd67"
+updated_at = "2026-09-24T10:08:43Z"
 
 [gymact]
-sha = "5141f88e5049cf1265cd847a86090c35852200cd"
+sha = "f0caffba449b1ca11606321a11b2384c0e3367cb"
 repository = "https://github.com/seanchatmangpt/gymact"
 role = "execution physics, providers, authority boundaries, receipts, verification and scoring"
 
@@ -13,7 +13,7 @@ repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
 [ggen_ecosystem]
-sha = "ba61d39c410d5c8b8d43959c0a3f9c1ee9624ad3"
+sha = "104f5afcc688e3f70185cc344b32645d6806171b"
 repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
 role = "deterministic manufacturer for downstream customer gyms"
 
@@ -48,7 +48,7 @@ repository = "https://github.com/seanchatmangpt/fdegym"
 role = "Forward Deployed Engineering environments and benchmarks"
 
 [gyms.gymact]
-sha = "5141f88e5049cf1265cd847a86090c35852200cd"
+sha = "f0caffba449b1ca11606321a11b2384c0e3367cb"
 repository = "https://github.com/seanchatmangpt/gymact"
 role = "canonical gym execution kernel and reference environment substrate"
 
@@ -74,7 +74,7 @@ role = "geopolitical/adversarial multi-party reference gym"
 
 [submodules]
 gymact_path = "vendor/gymact"
-gymact_commit = "5141f88e5049cf1265cd847a86090c35852200cd"
+gymact_commit = "f0caffba449b1ca11606321a11b2384c0e3367cb"
 autofde_lab_path = "vendor/autofde-lab"
 autofde_lab_commit = "29ffb8f9749b0b693579bc68c7f61ac15b16841f"
 sregym_path = "vendor/SREGym"
@@ -82,7 +82,7 @@ sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
 fdegym_path = "vendor/fdegym"
 fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 ggen_ecosystem_path = "vendor/ggen-ecosystem"
-ggen_ecosystem_commit = "ba61d39c410d5c8b8d43959c0a3f9c1ee9624ad3"
+ggen_ecosystem_commit = "104f5afcc688e3f70185cc344b32645d6806171b"
 beam4pm_path = "vendor/beam4pm"
 beam4pm_commit = "574368706e6afd804c7a13771bed3cf03da33ce0"
 awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
