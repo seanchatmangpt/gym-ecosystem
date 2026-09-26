@@ -1,24 +1,24 @@
 version = 2
-base_main_sha = "b26ae3c48f2b92fe837007c37a20c2b867387c48"
-updated_at = "2026-09-26T01:39:20Z"
+base_main_sha = "c9377113e525cd4fdcfb0f1a2dc031f2fb57244b"
+updated_at = "2026-09-26T13:13:45Z"
 
 [gymact]
-sha = "eeb0c2b97cfa55210f26bb7365989a739b3cb113"
+sha = "288ca7455ac0b7312c2d64d936a3bc392dfb3b0f"
 repository = "https://github.com/seanchatmangpt/gymact"
 role = "execution physics, providers, authority boundaries, receipts, verification and scoring"
 
 [autofde_lab]
-sha = "b417eea64ef8e4d841b9cc2f4a898753e4b71d1b"
+sha = "a936f3601bde56e9b72ea8f6ec660172ee32c128"
 repository = "https://github.com/seanchatmangpt/autofde-lab"
 role = "planners, policies, search, history-to-plan replay compilation and counterfactual experiment logic"
 
 [ggen_ecosystem]
-sha = "3c3d3d4569becd19b08fd6a6984aa5c4cc2cd525"
+sha = "c9e305d713fe053ba496a973ea00dcaf8893ada3"
 repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
 role = "deterministic manufacturer for downstream customer gyms"
 
 [beam4pm]
-sha = "c2d9dbe441b892ba070eac52bfebeb0e3c132d39"
+sha = "e100ecfdd31438e8f620d49f92e27b5f10479184"
 repository = "https://github.com/seanchatmangpt/beam4pm"
 role = "OCEL, process mining and process-intelligence feedback"
 
@@ -48,7 +48,7 @@ repository = "https://github.com/seanchatmangpt/fdegym"
 role = "Forward Deployed Engineering environments and benchmarks"
 
 [gyms.gymact]
-sha = "eeb0c2b97cfa55210f26bb7365989a739b3cb113"
+sha = "288ca7455ac0b7312c2d64d936a3bc392dfb3b0f"
 repository = "https://github.com/seanchatmangpt/gymact"
 role = "canonical gym execution kernel and reference environment substrate"
 
@@ -74,17 +74,17 @@ role = "geopolitical/adversarial multi-party reference gym"
 
 [submodules]
 gymact_path = "vendor/gymact"
-gymact_commit = "eeb0c2b97cfa55210f26bb7365989a739b3cb113"
+gymact_commit = "288ca7455ac0b7312c2d64d936a3bc392dfb3b0f"
 autofde_lab_path = "vendor/autofde-lab"
-autofde_lab_commit = "b417eea64ef8e4d841b9cc2f4a898753e4b71d1b"
+autofde_lab_commit = "a936f3601bde56e9b72ea8f6ec660172ee32c128"
 sregym_path = "vendor/SREGym"
 sregym_commit = "98147f396db0aaa622c7586d4bec5bdcb4cff20f"
 fdegym_path = "vendor/fdegym"
 fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 ggen_ecosystem_path = "vendor/ggen-ecosystem"
-ggen_ecosystem_commit = "3c3d3d4569becd19b08fd6a6984aa5c4cc2cd525"
+ggen_ecosystem_commit = "c9e305d713fe053ba496a973ea00dcaf8893ada3"
 beam4pm_path = "vendor/beam4pm"
-beam4pm_commit = "c2d9dbe441b892ba070eac52bfebeb0e3c132d39"
+beam4pm_commit = "e100ecfdd31438e8f620d49f92e27b5f10479184"
 awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
 awesome_ai_gyms_commit = "d32f01854fbc9bae52960f85e3c2a170113103b4"
 biblegym_path = "vendor/biblegym"
