@@ -1,5 +1,7 @@
 # gym-ecosystem
 
+Release: **26.9.30** (CalVer `YY.M.D`; single source of truth is `VERSION`, mirrored as `release` in `ecosystem.lock.toml` and enforced by `scripts/verify-provenance.sh`).
+
 Composition root and reference corpus for receipted, reproducible simulation ecosystems.
 
 `gym-ecosystem` mirrors the `ggen-ecosystem` composition pattern: direct dependencies live under `vendor/`, `.gitmodules` declares transport, `ecosystem.lock.toml` declares exact identity and role, and CI proves every Gitlink and lock entry agree on the exact pull-request head.

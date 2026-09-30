@@ -3,6 +3,7 @@ set -euo pipefail
 
 python3 - <<'PY'
 from pathlib import Path
+import re
 import subprocess
 import tomllib
 
@@ -10,9 +11,17 @@ root = Path.cwd()
 lock = tomllib.loads((root / "ecosystem.lock.toml").read_text())
 submodules = lock["submodules"]
 
+errors = []
+release = lock.get("release", "")
+version_file = root / "VERSION"
+file_release = version_file.read_text().strip() if version_file.is_file() else ""
+if not re.fullmatch(r"\d{2}\.(?:[1-9]|1[0-2])\.(?:[1-9]|[12]\d|3[01])", release):
+    errors.append(f"release: {release!r} is not CalVer YY.M.D")
+if file_release != release:
+    errors.append(f"VERSION={file_release!r}, lock release={release!r}")
+
 keys = sorted(k[:-5] for k in submodules if k.endswith("_path"))
 expected = []
-errors = []
 for key in keys:
     path_key = f"{key}_path"
     commit_key = f"{key}_commit"
@@ -60,7 +69,7 @@ for path, wanted in expected:
 if errors:
     raise SystemExit("PROVENANCE_BLOCKED\n" + "\n".join(errors))
 
-print(f"PROVENANCE_ALIVE direct_submodules={len(expected)}")
+print(f"PROVENANCE_ALIVE release={release} direct_submodules={len(expected)}")
 for path, wanted in expected:
     print(f"{path} {wanted}")
 PY
