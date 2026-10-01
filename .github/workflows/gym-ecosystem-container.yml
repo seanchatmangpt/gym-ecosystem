@@ -6,6 +6,7 @@ on:
       - "Dockerfile"
       - ".dockerignore"
       - "ecosystem.lock.toml"
+      - "VERSION"
       - ".gitmodules"
       - "scripts/container-smoke.sh"
       - "scripts/verify-provenance.sh"
@@ -33,6 +34,7 @@ jobs:
       packages: read
     outputs:
       ggen_sha: ${{ steps.lock.outputs.ggen_sha }}
+      release: ${{ steps.lock.outputs.release }}
     steps:
       - name: Checkout exact subject with direct submodules
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -57,6 +59,7 @@ jobs:
           with open('ecosystem.lock.toml', 'rb') as f:
               doc = tomllib.load(f)
           print('ggen_sha=' + doc['submodules']['ggen_ecosystem_commit'])
+          print('release=' + doc['release'])
           PY
       - name: Prove customer manufacturer surface
         shell: bash
@@ -125,6 +128,7 @@ jobs:
           build-args: |
             GGEN_ECOSYSTEM_IMAGE=ghcr.io/seanchatmangpt/ggen-ecosystem:sha-${{ needs.preflight.outputs.ggen_sha }}
             SOURCE_SHA=${{ github.sha }}
+            RELEASE_VERSION=${{ needs.preflight.outputs.release }}
           cache-from: type=gha,scope=gym-ecosystem-amd64
           cache-to: type=gha,mode=max,scope=gym-ecosystem-amd64
           tags: ghcr.io/seanchatmangpt/gym-ecosystem:sha-${{ github.sha }}-amd64
@@ -164,6 +168,7 @@ jobs:
           build-args: |
             GGEN_ECOSYSTEM_IMAGE=ghcr.io/seanchatmangpt/ggen-ecosystem:sha-${{ needs.preflight.outputs.ggen_sha }}
             SOURCE_SHA=${{ github.sha }}
+            RELEASE_VERSION=${{ needs.preflight.outputs.release }}
           cache-from: type=gha,scope=gym-ecosystem-arm64
           cache-to: type=gha,mode=max,scope=gym-ecosystem-arm64
           tags: ghcr.io/seanchatmangpt/gym-ecosystem:sha-${{ github.sha }}-arm64
@@ -194,6 +199,8 @@ jobs:
       - name: Create and push multi-arch manifest
         id: manifest
         shell: bash
+        env:
+          RELEASE: ${{ needs.preflight.outputs.release }}
         run: |
           set -euo pipefail
           TAG="sha-${GITHUB_SHA}"
@@ -202,6 +209,7 @@ jobs:
             -t "$IMAGE" \
             -t "ghcr.io/seanchatmangpt/gym-ecosystem:main" \
             -t "ghcr.io/seanchatmangpt/gym-ecosystem:latest" \
+            -t "ghcr.io/seanchatmangpt/gym-ecosystem:${RELEASE}" \
             "ghcr.io/seanchatmangpt/gym-ecosystem:${TAG}-amd64" \
             "ghcr.io/seanchatmangpt/gym-ecosystem:${TAG}-arm64"
           DIGEST="$(docker buildx imagetools inspect "$IMAGE" --format "{{json .Manifest}}" | jq -r '.digest')"
@@ -236,6 +244,7 @@ jobs:
           IMAGE: ${{ steps.manifest.outputs.image }}
           DIGEST: ${{ steps.manifest.outputs.digest }}
           GGEN_SHA: ${{ needs.preflight.outputs.ggen_sha }}
+          RELEASE: ${{ needs.preflight.outputs.release }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/gym-container"
@@ -249,6 +258,7 @@ jobs:
               'image': os.environ['IMAGE'],
               'digest': os.environ['DIGEST'],
               'ggen_ecosystem_sha': os.environ['GGEN_SHA'],
+              'release': os.environ['RELEASE'],
               'lock_sha256': hashlib.sha256(lock).hexdigest(),
               'run_id': os.environ['GITHUB_RUN_ID'],
               'standing': 'ALIVE',

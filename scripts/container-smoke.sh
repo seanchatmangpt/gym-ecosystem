@@ -12,6 +12,10 @@ root = Path.cwd()
 lock = tomllib.loads((root / "ecosystem.lock.toml").read_text())
 subs = lock["submodules"]
 keys = sorted(k[:-5] for k in subs if k.endswith("_path"))
+release = lock.get("release", "")
+version_file = root / "VERSION"
+if not version_file.is_file() or version_file.read_text().strip() != release or not release:
+    raise SystemExit(f"GYM_ECOSYSTEM_CONTAINER_BLOCKED[RELEASE_MISMATCH]:{release!r}")
 if len(keys) < 13:
     raise SystemExit(f"GYM_ECOSYSTEM_CONTAINER_BLOCKED[DIRECT_SUBMODULE_COUNT]:{len(keys)}")
 for key in keys:
@@ -20,7 +24,7 @@ for key in keys:
         raise SystemExit(f"GYM_ECOSYSTEM_CONTAINER_BLOCKED[MISSING_VENDOR]:{path}")
     if not any(path.iterdir()):
         raise SystemExit(f"GYM_ECOSYSTEM_CONTAINER_BLOCKED[EMPTY_VENDOR]:{path}")
-print(f"GYM_VENDOR_CORPUS_ALIVE direct_submodules={len(keys)}")
+print(f"GYM_VENDOR_CORPUS_ALIVE release={release} direct_submodules={len(keys)}")
 PY
 
 command -v ggen >/dev/null
