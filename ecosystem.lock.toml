@@ -1,7 +1,7 @@
 version = 2
 release = "26.9.30"
-base_main_sha = "6dee0ab7997a0fac3d53e373f5d79c3158808691"
-updated_at = "2026-10-13T22:53:12Z"
+base_main_sha = "6a83dc75a697e65e9e6d41c5ef876e7ac31b2ece"
+updated_at = "2026-10-29T16:58:26Z"
 
 [gymact]
 sha = "03393bb06a560e8e2318df3e2896298d261520b1"
@@ -19,7 +19,7 @@ repository = "https://github.com/seanchatmangpt/ggen-ecosystem"
 role = "deterministic manufacturer for downstream customer gyms"
 
 [beam4pm]
-sha = "ec24129d51eda42c3f92e7215caed750ecb0c489"
+sha = "620d1753d5032a23a755c8024bb5abf741f70fa6"
 repository = "https://github.com/seanchatmangpt/beam4pm"
 role = "OCEL, process mining and process-intelligence feedback"
 
@@ -85,7 +85,7 @@ fdegym_commit = "c7b51338fd7659540bfb1f559b02f426a61c460f"
 ggen_ecosystem_path = "vendor/ggen-ecosystem"
 ggen_ecosystem_commit = "ab2a850488c0f49dc1f7754c6236a4f5d8d6d18f"
 beam4pm_path = "vendor/beam4pm"
-beam4pm_commit = "ec24129d51eda42c3f92e7215caed750ecb0c489"
+beam4pm_commit = "620d1753d5032a23a755c8024bb5abf741f70fa6"
 awesome_ai_gyms_path = "vendor/awesome-ai-gyms"
 awesome_ai_gyms_commit = "d32f01854fbc9bae52960f85e3c2a170113103b4"
 biblegym_path = "vendor/biblegym"
